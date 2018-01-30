@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title></title>
+</h:head>
+
+<h:body>
+	<ui:composition template="./templateAdministrative.xhtml">
+		<ui:define name="content">
+			<p:growl id="growl" sticky="true" showDetail="true" life="1000" />
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+			<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+				closable="false" resizable="false" showHeader="false">
+				<p:graphicImage name="/images/ajax-loader.gif" />
+			</p:dialog>
+			<div class="div-manage-profile">
+				<p:tabView id="tabUpdatePromotion">
+					<p:tab title="#{msg['get.promotion.tabview.get']}"
+						rendered="#{getPromotionMGBean.permissionRol.write == 1 or getPromotionMGBean.permissionRol.write == 3}">
+						<p:outputPanel deferred="true">
+							<h:form id="formUpdatePromotion">
+								<p:wizard flowListener="#{getPromotionMGBean.onFlowProcess}"
+									nextLabel="#{msg['common.next']}"
+									backLabel="#{msg['common.back']}">
+									<p:tab id="obtenerDetalles"
+										title="#{msg['get.promotion.tab.get']}">
+										<p:panel header="#{msg['get.promotion.panel.get']}">
+											<p:messages />
+											<h:panelGrid columns="2" columnClasses="label, value">
+												<h:outputText styleClass="outputlabel-bold"
+													value="#{msg['get.promotion.output.text.service.promotion']}" />
+												<p:selectOneMenu value="#{getPromotionMGBean.nameService}">
+													<!-- <f:selectItem itemValue="enrollProfile"
+														itemLabel="Bono Vinculación" /> -->
+													<f:selectItem itemLabel="- #{msg['common.select']} -"
+														itemValue="" />
+													<f:selectItems
+														value="#{getPromotionMGBean.selectDescription}" />
+												</p:selectOneMenu>
+
+											</h:panelGrid>
+										</p:panel>
+									</p:tab>
+
+									<p:tab id="confirmation"
+										title="#{msg['get.promotion.tab.resultado']}">
+										<p:panel id="tres"
+											header="#{msg['get.promotion.panel.resultado.title']}">
+											<p:messages />
+											<h:panelGrid columns="2" columnClasses="label, value">
+												<h:outputText styleClass="outputlabel-bold"
+													value="#{msg['edit.promotion.text.descriptionBono']}"
+													rendered="#{getPromotionMGBean.code == 2}" />
+												<h:outputText styleClass="outputlabel-bold"
+													value="#{msg['edit.promotion.text.descriptionCashback']}"
+													rendered="#{getPromotionMGBean.code == 1}" />
+												<h:outputText styleClass="outputlabel-bold"
+													value="#{getPromotionMGBean.description}" />
+												<h:outputText value="#{msg['edit.promotion.text.fromDate']}"
+													styleClass="outputlabel-bold" />
+												<h:outputText styleClass="outputlabel-bold"
+													value="#{getPromotionMGBean.stringFromDate}" />
+												<h:outputText value="#{msg['edit.promotion.text.toDate']}"
+													styleClass="outputlabel-bold" />
+												<h:outputText styleClass="outputlabel-bold"
+													value="#{getPromotionMGBean.stringToDate}" />
+											</h:panelGrid>
+
+											<div style="text-align: end;">
+												<p:commandLink oncomplete="PF('updateDialog').show();" >Editar</p:commandLink>
+											</div>
+
+
+											<p:dialog header="#{msg['edit.promotion.dialog.title']}"
+												widgetVar="updateDialog" modal="true" showEffect="blind"
+												hideEffect="explode" resizable="false">
+
+												<p:outputPanel id="panelEditProfile"
+													style="text-align:left;">
+													<p:messages />
+													<h:form id="formGetPromotion">
+														<p:wizard
+															flowListener="#{getPromotionMGBean.onFlowProcessUpdate}"
+															nextLabel="#{msg['common.next']}"
+															backLabel="#{msg['common.back']}"
+															widgetVar="wizardPromo">
+															<p:tab id="getPromotion"
+																title="#{msg['edit.promotion.tab.edit']}">
+																<p:panel header="#{msg['edit.promotion.panel.edit']}">
+																	<p:messages />
+																	<h:panelGrid columns="2" columnClasses="label, value">
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.descriptionBono']}"
+																			rendered="#{getPromotionMGBean.code == 2}" />
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.descriptionCashback']}" 
+																			rendered="#{getPromotionMGBean.code == 1}"/>	
+																		<p:inputText value="#{getPromotionMGBean.description}"
+																			label="#{msg['edit.promotion.text.description']}"
+																			required="true" />
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.status']}" />
+																		<p:selectOneMenu id="selectSatus" value="#{getPromotionMGBean.status}"
+																			styleClass="outputSelect" >
+																			<f:selectItem itemValue="0" itemLabel="Inactivo" />
+																			<f:selectItem itemValue="1" itemLabel="Activo" />
+																		</p:selectOneMenu>	
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.fromDate']}" />
+																		<p:calendar value="#{getPromotionMGBean.dateFrom}"
+																			label="#{msg['edit.promotion.text.fromDate']}"
+																			pattern="dd-MM-yyyy" mask="true" />
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.toDate']}" />
+																		<p:calendar value="#{getPromotionMGBean.dateTo}"
+																			label="#{msg['edit.promotion.text.toDate']}"
+																			pattern="dd-MM-yyyy" mask="true" />
+																			
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.fromHour']}" />
+																		<p:calendar value="#{getPromotionMGBean.hourFrom}"
+																			label="#{msg['edit.promotion.text.fromHour']}"
+																			pattern="HH:mm:ss" mask="true" timeOnly="true"/>
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.toHour']}" />
+																		<p:calendar value="#{getPromotionMGBean.hourTo}"
+																			label="#{msg['edit.promotion.text.toHour']}"
+																			pattern="HH:mm:ss" mask="true" timeOnly="true"/>	
+																			
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.value']}" />
+																		<p:inputText value="#{getPromotionMGBean.value}"
+																			label="#{msg['edit.promotion.text.value']}"
+																			onkeypress="return justNumbers(event);"
+																			required="true" />
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.minValue']}"
+																			rendered="#{getPromotionMGBean.code == 1}" />
+																		<p:inputText value="#{getPromotionMGBean.minValue}"
+																			label="#{msg['edit.promotion.text.minValue']}"
+																			onkeypress="return justNumbers(event);"
+																			required="true"
+																			rendered="#{getPromotionMGBean.code == 1}" />
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.maxValue']}"
+																			rendered="#{getPromotionMGBean.code == 1}" />
+																		<p:inputText value="#{getPromotionMGBean.maxValue}"
+																			label="#{msg['edit.promotion.text.maxValue']}"
+																			onkeypress="return justNumbers(event);"
+																			required="true"
+																			rendered="#{getPromotionMGBean.code == 1}" />
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.valueType']}"
+																			rendered="#{getPromotionMGBean.code == 1}" />
+																		<p:selectOneMenu
+																			value="#{getPromotionMGBean.valueType}"
+																			styleClass="outputSelect"
+																			rendered="#{getPromotionMGBean.code == 1}">
+																			<f:selectItem itemValue="$" itemLabel="Monto Fijo" />
+																			<f:selectItem itemValue="%" itemLabel="Porcentaje" />
+																		</p:selectOneMenu>
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.accountingAccount']}" />
+																		<p:inputText
+																			value="#{getPromotionMGBean.accountingAccount}"
+																			label="#{msg['edit.promotion.text.accountingAccount']}"
+																			required="true" />
+																			
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.maximumBudget']}" 
+																			rendered="#{getPromotionMGBean.code == 2}"/>
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.maximumBudgetCashback']}" 
+																			rendered="#{getPromotionMGBean.code == 1}"/>
+																		<p:inputText id="maximumBudget"
+																			value="#{getPromotionMGBean.maximumBudget}"
+																			label="#{msg['edit.promotion.text.maximumBudget']}"
+																			onkeypress="return justNumbers(event);"
+																			required="true">
+																			<f:convertNumber groupingUsed="false" />
+																			<f:validator
+																				validatorId="custom.maximumBudgetValidator" />
+																		</p:inputText>
+
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.availableValue']}" />
+																		<p:inputText id="availableValue"
+																			value="#{getPromotionMGBean.availableValue}"
+																			label="#{msg['edit.promotion.text.availableValue']}"
+																			onkeypress="return justNumbers(event);"
+																			required="true" readonly="true">
+																			<f:convertNumber groupingUsed="false" />
+																		</p:inputText>
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.ocurrence']}" 
+																			rendered="#{getPromotionMGBean.code == 2}"/>
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.ocurrenceCashback']}" 
+																			rendered="#{getPromotionMGBean.code == 1}"/>	
+																		<p:inputText value="#{getPromotionMGBean.ocurrence}"
+																			label="#{msg['edit.promotion.text.ocurrence']}"
+																			onkeypress="return justNumbers(event);"
+																			required="true" />
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.message']}" />
+																		<p:inputText value="#{getPromotionMGBean.message}"
+																			label="#{msg['edit.promotion.text.message']}"
+																			required="true" />
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.notificationType']}"
+																			rendered="#{getPromotionMGBean.code == 1}" />
+																		<p:selectOneMenu
+																			value="#{getPromotionMGBean.notificationType}"
+																			styleClass="outputSelect"
+																			rendered="#{getPromotionMGBean.code == 1}">
+																			<f:selectItem itemValue="PUSH" itemLabel="PUSH" />
+																			<f:selectItem itemValue="SMS" itemLabel="SMS" />
+																			<f:ajax render="notification" />
+																		</p:selectOneMenu>
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.subject']}"
+																			rendered="#{getPromotionMGBean.code == 1}" />
+																		<p:inputText id="notification" value="#{getPromotionMGBean.subject}"
+																			label="#{msg['edit.promotion.text.subject']}"
+																			required="true"
+																			rendered="#{getPromotionMGBean.code == 1}"
+																			disabled="#{getPromotionMGBean.notificationType == 'SMS'}" />
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.resetCampaign']}" />
+																		<p:selectBooleanCheckbox id="resetCamp"
+																			value="#{getPromotionMGBean.resetCampaign}"
+																			label="#{msg['edit.promotion.text.resetCampaign']}" />	
+																	</h:panelGrid>
+																</p:panel>
+															</p:tab>
+															<p:tab id="confirmationUpdate"
+																title="#{msg['edit.promotion.tab.confirm']}">
+																<p:panel id="dlgPromUp"
+																	header="#{msg['edit.promotion.panel.edit']}">
+																	<p:messages />
+																	<h:panelGrid columns="2" columnClasses="label, value">
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.descriptionBono']}"
+																			rendered="#{getPromotionMGBean.code == 2}" />
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.descriptionCashback']}" 
+																			rendered="#{getPromotionMGBean.code == 1}"/>
+																		<h:outputText
+																			value="#{getPromotionMGBean.description}" />
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.status']}" />
+																		<h:outputText
+																			value="#{getPromotionMGBean.statusTxt}" />	
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.fromDate']}" />
+																		<h:outputText
+																			value="#{getPromotionMGBean.fromDate}" />
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.toDate']}" />
+																		<h:outputText
+																			value="#{getPromotionMGBean.toDate}" />
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.fromHour']}" />
+																		<h:outputText
+																			value="#{getPromotionMGBean.fromHour}" />
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.toHour']}" />
+																		<h:outputText
+																			value="#{getPromotionMGBean.toHour}" />	
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.value']}" />
+																		<h:outputText
+																			value="#{getPromotionMGBean.value}" />
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.minValue']}"
+																			rendered="#{getPromotionMGBean.code == 1}" />
+																		<h:outputText
+																			value="#{getPromotionMGBean.minValue}"
+																			rendered="#{getPromotionMGBean.code == 1}" />
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.maxValue']}"
+																			rendered="#{getPromotionMGBean.code == 1}" />
+																		<h:outputText
+																			value="#{getPromotionMGBean.maxValue}"
+																			rendered="#{getPromotionMGBean.code == 1}" />
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.valueType']}"
+																			rendered="#{getPromotionMGBean.code == 1}" />
+																		<h:outputText 
+																			value="#{getPromotionMGBean.valueType}"
+																			rendered="#{getPromotionMGBean.code == 1}" />
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.accountingAccount']}" />
+																		<h:outputText 
+																			value="#{getPromotionMGBean.accountingAccount}" />
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.maximumBudget']}" 
+																			rendered="#{getPromotionMGBean.code == 2}"/>
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.maximumBudgetCashback']}" 
+																			rendered="#{getPromotionMGBean.code == 1}"/>
+																		<h:outputText
+																			value="#{getPromotionMGBean.maximumBudget}">
+																			<f:convertNumber groupingUsed="false" />
+																		</h:outputText>
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.availableValue']}" />
+																		<h:outputText
+																			value="#{getPromotionMGBean.availableValueAfterModify}">
+																			<f:convertNumber groupingUsed="false" />
+																		</h:outputText>
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.ocurrence']}" 
+																			rendered="#{getPromotionMGBean.code == 2}"/>
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.ocurrenceCashback']}" 
+																			rendered="#{getPromotionMGBean.code == 1}"/>
+																		<h:outputText
+																			value="#{getPromotionMGBean.ocurrence}" />
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.message']}" />
+																		<h:outputText
+																			value="#{getPromotionMGBean.message}" />
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.notificationType']}"
+																			rendered="#{getPromotionMGBean.code == 1}" />
+																		<h:outputText 
+																			value="#{getPromotionMGBean.notificationType}"
+																			rendered="#{getPromotionMGBean.code == 1}" />
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.subject']}"
+																			rendered="#{getPromotionMGBean.code == 1}" />
+																		<h:outputText
+																			value="#{getPromotionMGBean.subject}"
+																			rendered="#{getPromotionMGBean.code == 1}" />
+
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.amountToDeliver']}" />
+																		<h:outputText
+																			value="#{getPromotionMGBean.amountToDeliver}">
+																			<f:convertNumber groupingUsed="false" />
+																		</h:outputText>
+
+																		<h:outputText styleClass="outputlabel-bold"
+																			value="#{msg['edit.promotion.text.resetCampaign']}" />
+																		<h:selectBooleanCheckbox 
+																			value="#{getPromotionMGBean.resetCampaign}" readonly="true" disabled="true"/>
+																				
+																	</h:panelGrid>
+																	<div style="text-align: end;">
+																		<p:commandButton
+																			oncomplete="PF('updateDialog').hide()"
+																			value="#{msg['edit.promotion.panel.confirm.button.update']}"
+																			actionListener="#{getPromotionMGBean.savePromotion}"
+																			update=":tabUpdatePromotion:formUpdatePromotion, :growl"
+																			style="margin-top: 4%;" process="@this" />
+																	</div>
+																</p:panel>
+															</p:tab>
+														</p:wizard>
+													</h:form>
+												</p:outputPanel>
+											</p:dialog>
+
+										</p:panel>
+									</p:tab>
+
+								</p:wizard>
+							</h:form>
+						</p:outputPanel>
+					</p:tab>
+				</p:tabView>
+			</div>
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>
